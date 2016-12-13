@@ -1,0 +1,6 @@
+dist/
+*.tgz
+tmp/
+*.log
+node_modules
+*.swp
