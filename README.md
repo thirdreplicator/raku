@@ -12,10 +12,13 @@ or
 get(key)
 ```
 
-but I found that most clients take in a slew of arguments that I didn't wantto think about.  So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.  
+but I found that most clients take in a slew of arguments that I didn't wantto think about.  So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.
 
 ### Usage
 
+```sh
+$ npm install --save raku
+```
 
 ```javascript
 import Raku from Raku

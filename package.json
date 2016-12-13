@@ -1,5 +1,5 @@
 {
-  "name": "Raku",
+  "name": "raku",
   "version": "1.0.0",
   "description": "A simple get/put/del interface to Riak",
   "main": "index.js",
