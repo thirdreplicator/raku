@@ -12,7 +12,7 @@ or
 get(key)
 ```
 
-but I found that most clients take in a slew of arguments that I didn't wantto think about.  So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.
+but I found that most clients take in a slew of arguments that I didn't want to think about.  So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.
 
 ### Usage
 
@@ -34,15 +34,19 @@ raku.set('mykey', 42)
 
 ### API
 
-This client only has only 3 operations: get, put, del.
+This client only has only 3 distinct operations: get, put, del.  set() is an alias for put()
 
-#### set
+#### put
 
 ```javascript
-raku.set(key, value)
+raku.put(key, value)
 ```
 
 The value will be serialized as a JSON string before being stored.
+
+#### set
+
+raku.set is an alias for raku.put
 
 #### get
 
@@ -64,7 +68,7 @@ This will delete the key in the Riak database.
 If you want the full power of a more sophisticated client, you can access the wrapped no-riak client like this:
 
 ```javascript
-  raku.client # a no-riak client
+  raku.client   # a no-riak client
   raku.NoRiak   # the no-riak module
 ```
 

@@ -6,7 +6,10 @@ class Raku {
   constructor() {
     this.client = new NoRiak.Client()
     this.NoRiak = NoRiak
+    // set(k, v) is an alias for put(k, v).
+    this.set = this.put
   }
+
 
   put(k, v) {
     return this.client.put({
@@ -15,6 +18,7 @@ class Raku {
       content: { value: JSON.stringify(v) }
     })
   } // put
+
 
   get(k) {
     return this.client.get({

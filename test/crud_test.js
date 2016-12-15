@@ -3,7 +3,7 @@ import { expect } from 'chai'
 
 const raku = new Raku()
 
-describe('create/read/update (put/get)', () => {
+describe('put/get', () => {
   it('should be able to save integers', () => {
     return raku.put('x', 43)
       .then( () => 43 )
@@ -11,6 +11,10 @@ describe('create/read/update (put/get)', () => {
       .then( x => {
         expect(x).to.eql(43)
       })
+  })
+
+  it('set() should be an alias to put()', () => {
+    expect(raku.set).to.eql(raku.put)
   })
 
   it('should be able to save decimal numbers', () => {
