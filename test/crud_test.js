@@ -3,18 +3,34 @@ import { expect } from 'chai'
 
 const raku = new Raku()
 
+describe('client handle', () => {
+  describe('bucket', () => {
+    it('should be set to the default bucket, "default"', () => {
+      expect(raku.bucket).to.eql(Raku.DEFAULT_BUCKET)
+    })
+
+    it('set the bucket state', () => {
+      raku.bucket = 'wow'
+      expect(raku.bucket).to.eql('wow')
+    })
+
+  }) // describe bucket
+
+  describe('aliases', () => {
+    it('set() should be an alias to put()', () => {
+      expect(raku.set).to.eql(raku.put)
+    })
+  }) // describe aliases
+}) // describe client handle
+
 describe('put/get', () => {
   it('should be able to save integers', () => {
+    raku.bucket = 'default' //Raku.DEFAULT_BUCKET
     return raku.put('x', 43)
-      .then( () => 43 )
       .then( () => raku.get('x') )
       .then( x => {
         expect(x).to.eql(43)
       })
-  })
-
-  it('set() should be an alias to put()', () => {
-    expect(raku.set).to.eql(raku.put)
   })
 
   it('should be able to save decimal numbers', () => {
@@ -121,6 +137,49 @@ describe('delete (del)', () => {
           expect(x).to.eql(null)
         })
   }) // it
-
 }) // describe
+
+describe('get/set using non-default bucket state', () => {
+  beforeEach(() => {
+    raku.bucket = 'test_bucket2'
+  })
+
+  afterEach( () => {
+    raku.bucket = Raku.DEFAULT_BUCKET
+  })
+
+  it('changing buckets should set a value in the new bucket', () => {
+    const VALUE = 500
+    return raku.set('x', VALUE)
+      .then( () => VALUE )
+      .then( () => raku.bget('test_bucket2', 'x') )
+      .then( value => {
+        expect(value).to.eql(VALUE)
+      })
+  })
+})
+
+
+describe('bset/bget', () => {
+  it('should get the value at (bucket, key)', () => {
+    raku.bucket = 'test_walrus'
+    return raku.bset('test_walrus', 'x42', 42)
+      raku.bget('test_walrus', 'x42')
+      .then( val => {
+        expect(val).to.eql(42)
+      })
+  })
+})
+
+describe('bdel', () => {
+  it('should delete the value at (bucket, key)', () => {
+    raku.bucket = 'test_walrus'
+    return raku.bset('test_walrus', 'x42', 42)
+      .then( () => raku.bdel('test_walrus', 'x42') )
+      raku.bget('test_walrus', 'x42')
+      .then( val => {
+        expect(val).to.eql(null)
+      })
+  })
+})
 

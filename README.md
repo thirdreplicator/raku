@@ -63,6 +63,38 @@ raku.del(key)
 
 This will delete the key in the Riak database.
 
+#### Which bucket?
+
+The unspecified fall-back value of the bucket is "default". To change the fall-back value just set assign it a new valu:
+
+#### bucket=
+````javascript
+raku.bucket = "mybucket"
+````
+
+#### Getting explicit
+
+#### bget
+````javascript
+raku.bget(bucket, key)
+````
+
+Get the value at (bucket, key).  Returns a promise.
+
+#### bset
+````javascript
+raku.bset(bucket, key, value)
+````
+
+Set the value at (bucket, key) to value.  Returns a promise.
+
+#### bdel
+````javascript
+raku.bdel(bucket, key)
+````
+
+Delete the value at (bucket, key).  Returns a promise.
+
 ### More power
 
 If you want the full power of a more sophisticated client, you can access the wrapped no-riak client like this:
