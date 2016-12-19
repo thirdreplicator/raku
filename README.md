@@ -65,7 +65,7 @@ This will delete the key in the Riak database.
 
 #### Which bucket?
 
-The unspecified fall-back value of the bucket is "default". To change the fall-back value just set assign it a new valu:
+For the aforementioned 4 functions (get, set, put, del) the unspecified fall-back value of the bucket is "default".  To change the fall-back value just set assign it a new value:
 
 #### bucket=
 ````javascript
@@ -73,6 +73,8 @@ raku.bucket = "mybucket"
 ````
 
 #### Getting explicit
+
+You can specify the bucket in the with the first argument with the following 3 functions:
 
 #### bget
 ````javascript
@@ -107,6 +109,8 @@ If you want the full power of a more sophisticated client, you can access the wr
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### NB
+
+2016-12-19: I just released v2.0.0.  That doesn't mean it's mature.  Following the semantic versioning convention, it just means that it's a breaking change.  It's breaking because the fall-back value of the bucket is no longer DEFAULT_BUCKET but instead it is this.bucket of the client instance, raku.
 
 2016-12-13: I just started learning Riak, and just released this little wrapper for myself.  I'll be adding features as I learn more about Riak.  I'm happy to hear from anybody using this.  You can email me here: thirdreplicator@gmail.com
 
