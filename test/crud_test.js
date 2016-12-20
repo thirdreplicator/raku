@@ -173,10 +173,10 @@ describe('bset/bget', () => {
 
 describe('bdel', () => {
   it('should delete the value at (bucket, key)', () => {
+    raku.bucket = 'default'
     return raku.bset('test_mighty_mouse', 'x500', 500)
       .then( () => raku.bget('test_mighty_mouse', 'x500') )
       .then( val => {
-        console.log('val:', val)
         expect(val).to.eql(500)
       })
       .then( () => raku.bdel('test_mighty_mouse', 'x500') )
