@@ -32,6 +32,13 @@ class Raku {
       })
   } // get
 
+  del(k) {
+    return this.client.del({
+        bucket: this.bucket,
+        key: k
+      })
+  }
+
   bget(bucket, k) {
     return this.client.get({
         bucket: bucket,
@@ -50,21 +57,12 @@ class Raku {
     })
   } // set3
 
-  del(k) {
-    return this.client.del({
-        bucket: this.bucket,
-        key: k
-      })
-  }
-
   bdel(k) {
     return this.client.del({
         bucket: this.bucket,
         key: k
       })
   }
-
-
 
   static get DEFAULT_BUCKET() {
     return DEFAULT_BUCKET
