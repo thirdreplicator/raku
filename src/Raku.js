@@ -57,9 +57,9 @@ class Raku {
     })
   } // set3
 
-  bdel(k) {
+  bdel(bucket, k) {
     return this.client.del({
-        bucket: this.bucket,
+        bucket: bucket,
         key: k
       })
   }
