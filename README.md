@@ -108,7 +108,7 @@ If you want the full power of a more sophisticated client, you can access the wr
 
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
-### NB
+### Notes
 
 2016-12-19: I just released v2.0.0.  That doesn't mean it's mature.  Following the semantic versioning convention, it just means that there's a breaking change.  There's breaking because the fall-back value of the bucket is no longer DEFAULT_BUCKET but instead it is this.bucket of the client instance, raku.
 
