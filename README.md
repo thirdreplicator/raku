@@ -32,9 +32,11 @@ raku.set('mykey', 42)
   })
 ```
 
-### API
+## API
 
-This client only has only 3 distinct operations: get, put, del.  set() is an alias for put()
+Currently, this client supports has only 3 distinct KV operations (get, put/set, del) and some counter operations (cget, cset, cinc, cdec).
+
+### KV (key-value) API
 
 #### put
 
@@ -63,13 +65,66 @@ raku.del(key)
 
 This will delete the key in the Riak database.
 
-#### Which bucket?
+### [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) [Riak Counters](http://docs.basho.com/riak/kv/2.2.0/developing/data-types/counters/)
 
-For the aforementioned 4 functions (get, set, put, del) the unspecified fall-back value of the bucket is "default".  To change the fall-back value just set assign it a new value:
+** Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions. **
+
+````bash
+riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
+riak-admin bucket-type activate counters
+````
+
+### KV (key-value) API
+
+#### cset
+````javascript
+raku.cset(key, value)
+````
+
+Set and save a counter to an arbitrary integer value (positive or negative).  Returns a promise that evaluates to the new value.
+
+#### cget
+````javascript
+raku.cget(key)
+````
+
+Get a counter stored at **key** from the database.  Returns a promise that evaluates to the value.
+
+#### cinc
+````javascript
+raku.cinc(key, amount)
+````
+
+Increment and save a counter by any amount.  Negative amounts will decrement the value. Returns a promise that evaluats to the new value. If multiple clients nearly simultaneously increment a value by one, each client will resolve to a unique number, thanks to the magic of Riak CRDT counters. If no amount is given, it will be assumed to be 1.
+
+#### cdec
+````javascript
+raku.cdec(key, amount)
+````
+
+Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1.
+
+### Bucket and bucket types API
+
+For the aforementioned KV functions (get, put/set, del), the unspecified fall-back value of the bucket is "default".  To change the fall-back value just set assign it a new value:
 
 #### bucket=
 ````javascript
 raku.bucket = "mybucket"
+````
+
+KV functions don't have a default bucket type.
+
+CRDT Counters have a default bucket type of "counters" and a default bucket also named "counters".  You can change these defaults like so:
+
+#### counter_bucket=
+````javascript
+raku.counter_bucket = "user_ids"
+````
+
+#### counter_bucket_type=
+````javascript
+raku.counter_bucket_type = "last_ids"
 ````
 
 ### Getting explicit
