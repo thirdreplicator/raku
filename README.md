@@ -67,14 +67,39 @@ This will delete the key in the Riak database.
 
 ### [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) [Riak Counters](http://docs.basho.com/riak/kv/2.2.0/developing/data-types/counters/)
 
-** Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions. **
+**Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions.**
 
 ````bash
 riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
 riak-admin bucket-type activate counters
 ````
 
-### KV (key-value) API
+### Getting explicit
+
+You can specify the bucket in the with the first argument with the following 3 KV functions.
+
+#### bget
+````javascript
+raku.bget(bucket, key)
+````
+
+Get the value at (bucket, key).  Returns a promise.
+
+#### bset
+````javascript
+raku.bset(bucket, key, value)
+````
+
+Set the value at (bucket, key) to value.  Returns a promise.
+
+#### bdel
+````javascript
+raku.bdel(bucket, key)
+````
+
+Delete the value at (bucket, key).  Returns a promise.
+
+### CRDT Counters API
 
 #### cset
 ````javascript
@@ -104,6 +129,8 @@ raku.cdec(key, amount)
 
 Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1.
 
+NB: There is no way to delete a counter key that I know of yet.  Please let me know if you know how to do that.  Cheers.
+
 ### Bucket and bucket types API
 
 For the aforementioned KV functions (get, put/set, del), the unspecified fall-back value of the bucket is "default".  To change the fall-back value just set assign it a new value:
@@ -113,7 +140,7 @@ For the aforementioned KV functions (get, put/set, del), the unspecified fall-ba
 raku.bucket = "mybucket"
 ````
 
-KV functions don't have a default bucket type.
+KV functions have a default bucket but don't have a default bucket **type**.
 
 CRDT Counters have a default bucket type of "counters" and a default bucket also named "counters".  You can change these defaults like so:
 
@@ -127,31 +154,6 @@ raku.counter_bucket = "user_ids"
 raku.counter_bucket_type = "last_ids"
 ````
 
-### Getting explicit
-
-You can specify the bucket in the with the first argument with the following 3 functions:
-
-#### bget
-````javascript
-raku.bget(bucket, key)
-````
-
-Get the value at (bucket, key).  Returns a promise.
-
-#### bset
-````javascript
-raku.bset(bucket, key, value)
-````
-
-Set the value at (bucket, key) to value.  Returns a promise.
-
-#### bdel
-````javascript
-raku.bdel(bucket, key)
-````
-
-Delete the value at (bucket, key).  Returns a promise.
-
 ### More power
 
 If you want the full power of a more sophisticated client, you can access the wrapped no-riak client like this:
@@ -164,6 +166,8 @@ If you want the full power of a more sophisticated client, you can access the wr
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### Notes
+
+2017-01-13: Just added support for incrementing counters: cset, cget, cinc, cdec.
 
 2016-12-19: I just released v2.0.0.  That doesn't mean it's mature.  Following the semantic versioning convention, it just means that there's a breaking change.  There's breaking because the fall-back value of the bucket is no longer DEFAULT_BUCKET but instead it is this.bucket of the client instance, raku.
 
