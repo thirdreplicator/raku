@@ -65,15 +65,6 @@ raku.del(key)
 
 This will delete the key in the Riak database.
 
-### [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) [Riak Counters](http://docs.basho.com/riak/kv/2.2.0/developing/data-types/counters/)
-
-**Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions.**
-
-````bash
-riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
-riak-admin bucket-type activate counters
-````
-
 ### Getting explicit
 
 You can specify the bucket in the with the first argument with the following 3 KV functions.
@@ -98,6 +89,15 @@ raku.bdel(bucket, key)
 ````
 
 Delete the value at (bucket, key).  Returns a promise.
+
+### [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) [Riak Counters](http://docs.basho.com/riak/kv/2.2.0/developing/data-types/counters/)
+
+**Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions.**
+
+````bash
+riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
+riak-admin bucket-type activate counters
+````
 
 ### CRDT Counters API
 
