@@ -95,8 +95,8 @@ Delete the value at (bucket, key).  Returns a promise.
 **Note: Before using counters for the first time, you must activate a counter bucket type using the riak-admin at the command line. This will make your Riak cluster incompatible with earlier versions.**
 
 ````bash
-riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
-riak-admin bucket-type activate counters
+$ riak-admin bucket-type create counters '{"props":{"datatype":"counter"}}'
+$ riak-admin bucket-type activate counters
 ````
 
 ### CRDT Counters API
