@@ -1,6 +1,8 @@
 import NoRiak from 'no-riak'
 
 const DEFAULT_BUCKET = 'default'
+const DEFAULT_COUNTER_BUCKET = 'counters'
+const DEFAULT_COUNTER_BUCKET_TYPE = 'counters'
 
 class Raku {
 
@@ -10,9 +12,16 @@ class Raku {
     // set(k, v) is an alias for put(k, v).
     this.set = this.put
     this.bucket = DEFAULT_BUCKET
+
+    // Cache counter handles to avoid reinitialization.
+    this.counters = {}
+    this.counter_bucket = DEFAULT_COUNTER_BUCKET
+    this.counter_bucket_type = DEFAULT_COUNTER_BUCKET_TYPE
   }
 
-
+  //----+
+  // KV |
+  //----+
   put(k, v) {
     return this.client.put({
       bucket: this.bucket,
@@ -64,9 +73,53 @@ class Raku {
       })
   }
 
-  static get DEFAULT_BUCKET() {
-    return DEFAULT_BUCKET
+  //----------+
+  // COUNTERS |
+  //----------+
+
+  get_counter(k) {
+    if (typeof k != 'string') {
+      throw new Error('The counter key must be a string.')
+    }
+    if (!this.counters[k]) {
+      this.counters[k] =  new NoRiak.CRDT.Counter(this.client,
+        { bucket: this.counter_bucket,
+          type: this.counter_bucket_type,
+          key: k})
+    } // if
+    return this.counters[k]
+  }
+
+  cget(k) {
+    let counter = this.get_counter(k)
+    return counter.load()
+      .then(counter => counter.value().toNumber())
+  }
+
+  cset(k, v) {
+    return this.cget(k)
+      .then(x => {
+        return this.counters[k].increment(-x + v).save()
+      })
+      .then(counter => counter.value().toNumber())
+  }
+
+  cinc(k, v) {
+    let counter = this.get_counter(k)
+    let amount = v
+    if (amount == undefined) { amount = 1 }
+    return counter.increment(amount).save()
+      .then(counter => counter.value().toNumber())
+  }
+
+  cdec(k, v) {
+    let amount = (v == undefined) ? -1 : -v
+    return this.cinc(k, amount)
   }
 } // Raku
+
+Raku.DEFAULT_BUCKET = DEFAULT_BUCKET
+Raku.DEFAULT_COUNTER_BUCKET = DEFAULT_COUNTER_BUCKET
+Raku.DEFAULT_COUNTER_BUCKET_TYPE = DEFAULT_COUNTER_BUCKET_TYPE
 
 export default Raku
