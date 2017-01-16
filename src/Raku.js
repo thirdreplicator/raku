@@ -90,6 +90,12 @@ class Raku {
     return this.counters[k]
   }
 
+  del_counter(k) {
+    Raku.check_key(k)
+    this.counters[k] = null
+    return delete this.counters[k]
+  }
+
   cget(k) {
     let counter = this.get_counter(k)
     return counter.load()
@@ -106,8 +112,7 @@ class Raku {
 
   cinc(k, v) {
     let counter = this.get_counter(k)
-    let amount = v
-    if (amount == undefined) { amount = 1 }
+    let amount = (v == undefined) ? 1 : v
     return counter.increment(amount).save()
       .then(counter => counter.value().toNumber())
   }
@@ -116,6 +121,20 @@ class Raku {
     let amount = (v == undefined) ? -1 : -v
     return this.cinc(k, amount)
   }
+
+  cdel(k) {
+    Raku.check_key(k)
+    this.del_counter(k)
+    return this.client.del({type: 'counters', bucket: 'counters', key: k})
+  }
+
+  // Make sure the key is a string.
+  static check_key(k) {
+    if (typeof k != 'string') {
+      throw new Error('The counter key must be a string.')
+    }
+  }
+
 } // Raku
 
 Raku.DEFAULT_BUCKET = DEFAULT_BUCKET

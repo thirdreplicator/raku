@@ -1,5 +1,5 @@
 import Raku from '../src/Raku'
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 
 const raku = new Raku()
 
@@ -49,13 +49,13 @@ describe('counter operations', () => {
       }).to.throw(/key must be a string/i)
     })
 
-  /* Remove this test until I figure out how to delete a CRDT COUNTER key and
-   *   start from scratch.
-   */
-  //  it('should be 0 to begin with', () => {
-  //    return raku.cget('test_counter')
-  //      .then(val => expect(val).to.eql(0))
-  //  })
+    it('should be 0 to begin with', () => {
+      return raku.client.del({ type: Raku.DEFAULT_COUNTER_BUCKET_TYPE,
+                               bucket: Raku.DEFAULT_COUNTER_BUCKET,
+                               key: 'test_counter'})
+          .then(() => raku.cget('test_counter'))
+          .then(val => expect(val).to.eql(0))
+    })
   })
 
   // set
@@ -85,7 +85,10 @@ describe('counter operations', () => {
     it('should increment the counter by one if no amount is provided', () => {
       return raku.cset('test_counter', 0)
         .then(() => raku.cinc('test_counter'))
-        .then(val => expect(val).to.eql(1))
+        .then(val => {
+          expect(val).to.not.be.undefined
+          expect(val).to.eql(1)
+        })
     })
 
     it('should increment the counter by n if provided as an argument', () => {
@@ -99,6 +102,12 @@ describe('counter operations', () => {
 
   // decrement
   describe('raku.cdec(key)', () => {
+    it('should throw an error if the first argument is not a string', () => {
+      expect(() => {
+        raku.cdec(0)
+      }).to.throw(/key must be a string/i)
+    })
+
     it('should throw an error if the first argument is not a string', () => {
       expect(() => {
         raku.cdec()
@@ -122,4 +131,47 @@ describe('counter operations', () => {
     })
   })
 
+  // delete a counter
+  describe('raku.cdel(key)', () => {
+    it('should not appear in the list of keys for the bucket.', () => {
+      // Delete the test_counter, and show that it's not in the list.
+      return raku.cdel('test_counter')
+        raku.client.listKeys({type: 'counters', bucket: 'counters'})
+        .then(keys => expect(keys).to.not.include('test_counter'))
+        // Create it, and show that it is in the list.
+        .then(() => raku.cset('test_counter', 500))
+        .then(() => raku.client.listKeys({type: 'counters', bucket: 'counters'}))
+        .then(keys => expect(keys).to.include('test_counter'))
+        // Delete it again, and show that it is not in the list.
+        .then(() => raku.cdel('test_counter'))
+        raku.client.listKeys({type: 'counters', bucket: 'counters'})
+        .then(keys => expect(keys).to.not.include('test_counter'))
+    })
+
+    it('should be reset to zero when accessed again.', () => {
+      return raku.cset('test_counter', 500)
+        .then(value => expect(value).to.eql(500))
+        .then(() => raku.cdel('test_counter'))
+        .then(() => raku.cset('test_counter', 2000))
+        .then(value => expect(value).to.eql(2000))
+    })
+
+    it('should be set to 1 if incremented.', () => {
+      return raku.cset('test_counter_inc', 500)
+        .then(() => raku.cdel('test_counter'))
+        .then(() => raku.cinc('test_counter'))
+        .then(value => {
+            expect(value).to.eql(1)
+          })
+    })
+
+    it('should be set to -1 if decremented.', () => {
+      return raku.cset('test_counter_dec', 500)
+        .then(() => raku.cdel('test_counter'))
+        .then(() => raku.cdec('test_counter'))
+        .then(value => {
+          expect(value).to.eql(-1)
+        })
+    })
+  })
 }) // describe counter operations (cset, cget, cinc, cdec)

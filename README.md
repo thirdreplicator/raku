@@ -129,7 +129,13 @@ raku.cdec(key, amount)
 
 Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1.
 
-NB: There is no way to delete a counter key that I know of yet.  Please let me know if you know how to do that.  Cheers.
+#### cdel
+````javascript
+raku.cdel(key)
+````
+
+Delete a counter.  This will delete the key in the `counters` bucket.  Returns a promise.
+
 
 ### Bucket and bucket types API
 
@@ -166,6 +172,8 @@ If you want the full power of a more sophisticated client, you can access the wr
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### Notes
+
+2017-01-16: Just added cdel for deleting a counter: cdel.
 
 2017-01-13: Just added support for incrementing counters: cset, cget, cinc, cdec.
 
