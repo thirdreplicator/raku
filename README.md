@@ -127,14 +127,14 @@ Increment and save a counter by any amount.  Negative amounts will decrement the
 raku.cdec(key, amount)
 ````
 
-Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1.
+Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1. Returns a promise that evaluates to the new value.
 
 #### cdel
 ````javascript
 raku.cdel(key)
 ````
 
-Delete a counter.  This will delete the key in the `counters` bucket.  Returns a promise.
+Delete a counter.  This will delete the key in the `counters` bucket.  Returns a promise that evaluates to null.
 
 
 ### Bucket and bucket types API

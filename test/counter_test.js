@@ -98,6 +98,17 @@ describe('counter operations', () => {
         .then(() => raku.cget('test_counter'))
         .then(val => expect(val).to.eql(5)) // database loaded value
     })
+
+    it('should return a unique counter value even under high contention', () => {
+      const N = 20
+      const arr = Array.from(new Array(N), (val,index)=>index)
+      return raku.cset('test_counter', 0)
+        .then(() => Promise.all(arr.map(i => raku.cinc('test_counter'))))
+        .then(values => {
+            let id_set = new Set(values)
+            expect(id_set.size).to.eql(N)
+          })
+    })
   })
 
   // decrement

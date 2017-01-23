@@ -14,7 +14,6 @@ class Raku {
     this.bucket = DEFAULT_BUCKET
 
     // Cache counter handles to avoid reinitialization.
-    this.counters = {}
     this.counter_bucket = DEFAULT_COUNTER_BUCKET
     this.counter_bucket_type = DEFAULT_COUNTER_BUCKET_TYPE
   }
@@ -78,22 +77,11 @@ class Raku {
   //----------+
 
   get_counter(k) {
-    if (typeof k != 'string') {
-      throw new Error('The counter key must be a string.')
-    }
-    if (!this.counters[k]) {
-      this.counters[k] =  new NoRiak.CRDT.Counter(this.client,
+    this.constructor.check_key(k)
+    return new NoRiak.CRDT.Counter(this.client,
         { bucket: this.counter_bucket,
           type: this.counter_bucket_type,
           key: k})
-    } // if
-    return this.counters[k]
-  }
-
-  del_counter(k) {
-    Raku.check_key(k)
-    this.counters[k] = null
-    return delete this.counters[k]
   }
 
   cget(k) {
@@ -105,7 +93,7 @@ class Raku {
   cset(k, v) {
     return this.cget(k)
       .then(x => {
-        return this.counters[k].increment(-x + v).save()
+        return this.get_counter(k).increment(-x + v).save()
       })
       .then(counter => counter.value().toNumber())
   }
@@ -123,9 +111,8 @@ class Raku {
   }
 
   cdel(k) {
-    Raku.check_key(k)
-    this.del_counter(k)
-    return this.client.del({type: 'counters', bucket: 'counters', key: k})
+    this.constructor.check_key(k)
+    return this.client.del({type: this.constructor.DEFAULT_COUNTER_BUCKET_TYPE , bucket: this.constructor.DEFAULT_COUNTER_BUCKET, key: k})
   }
 
   // Make sure the key is a string.
@@ -135,7 +122,7 @@ class Raku {
     }
   }
 
-} // Raku
+} // class Raku
 
 Raku.DEFAULT_BUCKET = DEFAULT_BUCKET
 Raku.DEFAULT_COUNTER_BUCKET = DEFAULT_COUNTER_BUCKET

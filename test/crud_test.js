@@ -26,7 +26,7 @@ describe('client handle', () => {
 describe('put/get', () => {
   it('should be able to save integers', () => {
     raku.bucket = 'default' //Raku.DEFAULT_BUCKET
-    return raku.put('x', 43)
+    return raku.set('x', 43)
       .then( () => raku.get('x') )
       .then( x => {
         expect(x).to.eql(43)
