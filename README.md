@@ -34,7 +34,7 @@ raku.set('mykey', 42)
 
 ## API
 
-Currently, this client supports 3 distinct KV operations (get, put/set, del), counters (cget, cset, cinc, cdec), and sets (sadd, srem, smembers, sismember).
+Currently, this client supports 3 distinct KV operations (get, put/set, del), counters (cget, cset, cinc, cdec, cdel), and sets (sadd, srem, smembers, sismember, sdel, scard).
 
 ### KV (key-value) API
 
@@ -185,6 +185,13 @@ raku.sdel(key)
 
 Delete all members of the set. Returns a promise.
 
+#### scard
+````javascript
+raku.scard(key)
+````
+
+Count members in the set. Returns a promise that resolves to the set's count.
+
 ### Bucket and bucket types API
 
 For the aforementioned KV, counter, and set functions rely on an unspecified fall-back value, one for each data type.	To change the fall-back value just assign it a new value:
@@ -236,7 +243,7 @@ See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### Notes
 
-2017-02-20: Added CRDT set operations: sismember, smembers, sadd, srem, sdel.
+2017-02-20: Added CRDT set operations: sismember, smembers, sadd, srem, sdel, scard.
 
 2017-01-16: Just added cdel for deleting a counter: cdel.
 

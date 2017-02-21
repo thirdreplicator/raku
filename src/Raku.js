@@ -140,6 +140,12 @@ class Raku {
 									.sort(sort_helper)
 			 })
 	}
+
+	scard(k) {
+		return this.smembers(k)
+			.then(values => values.length)
+	}
+
 	//----------+
 	// COUNTERS |
 	//----------+

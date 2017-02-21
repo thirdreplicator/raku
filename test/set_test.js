@@ -149,4 +149,14 @@ describe('CRDT sets', () => {
 		})
 	}) // smembers
 
+	describe('raku.smembers(key)', () => {
+		it('should return the number of membrs in the set', () => {
+			let s0 = [42, 50, 100, 'hello']
+			return raku.sdel('test_sets')
+				.then(() => raku.sadd('test_sets', ...s0))
+				.then(() => raku.scard('test_sets'))
+				.then(res => expect(res).to.eql(s0.length))
+			
+		})
+	}) // scard
 }) // describe sets operations (sadd, sismember, srem, sdel, smemembers)
