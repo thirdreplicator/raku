@@ -1,6 +1,6 @@
 {
   "name": "raku",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "description": "A simple get/put/del interface to Riak",
   "main": "dist/Raku.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "watch": "mocha --compilers js:babel-core/register --require babel-polyfill --recursive test/ --watch",
     "prebuild": "rimraf dist",
     "build": "babel --out-dir dist src",
-    "preactivate": "riak-admin bucket-type create counters '{\"props\":{\"datatype\":\"counter\"}}'",
-    "activate": "riak-admin bucket-type activate counters"
+    "preactivate": "riak-admin bucket-type create counters '{\"props\":{\"datatype\":\"counter\"}}'; riak-admin bucket-type create sets '{\"props\":{\"datatype\":\"sets\"}}'",
+    "activate": "riak-admin bucket-type activate counters; riak-admin bucket-type sets"
   },
   "author": "",
   "license": "MIT",
