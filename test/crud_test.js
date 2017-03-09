@@ -162,9 +162,9 @@ describe('get/set using non-default bucket state', () => {
 
 describe('bset/bget', () => {
   it('should get the value at (bucket, key)', () => {
-    raku.bucket = 'test_walrus'
-    return raku.bset('test_walrus', 'x42', 42)
-      raku.bget('test_walrus', 'x42')
+    raku.bucket = 'sfksjalfk'
+    return raku.bset('test/test_walrus', 'x42', 42)
+      raku.bget('test/test_walrus', 'x42')
       .then( val => {
         expect(val).to.eql(42)
       })
@@ -174,13 +174,13 @@ describe('bset/bget', () => {
 describe('bdel', () => {
   it('should delete the value at (bucket, key)', () => {
     raku.bucket = 'default'
-    return raku.bset('test_mighty_mouse', 'x500', 500)
-      .then( () => raku.bget('test_mighty_mouse', 'x500') )
+    return raku.bset('test/mighty_mouse', 'x500', 500)
+      .then( () => raku.bget('test/mighty_mouse', 'x500') )
       .then( val => {
         expect(val).to.eql(500)
       })
-      .then( () => raku.bdel('test_mighty_mouse', 'x500') )
-      raku.bget('test_mighty_mouse', 'x500')
+      .then( () => raku.bdel('test/mighty_mouse', 'x500') )
+      raku.bget('test/mighty_mouse', 'x500')
       .then( val => {
         expect(val).to.eql(null)
       })

@@ -60,12 +60,12 @@ describe('CRDT sets', () => {
 
 		it('should return true if the item is a member of the set', () => {
 			var set = new raku.NoRiak.CRDT.Set(raku.client, {
-						bucket: Raku.DEFAULT_SETS_BUCKET,
+						bucket: 'test/' + Raku.DEFAULT_SETS_BUCKET,
 						type: Raku.DEFAULT_SETS_BUCKET_TYPE,
 						key: 'test_sets'
 				});
 			return raku.client.del({ type: Raku.DEFAULT_SETS_BUCKET_TYPE,
-															 bucket: Raku.DEFAULT_SETS_BUCKET,
+															 bucket: 'test/' + Raku.DEFAULT_SETS_BUCKET,
 															 key: 'test_sets',
 															 strings: true })
 				.then(() => set.add(JSON.stringify('hello')).save())
