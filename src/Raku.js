@@ -27,12 +27,31 @@ class Raku {
 		this.sets_bucket_type = DEFAULT_SETS_BUCKET_TYPE
 	}
 
+  getBucket(type) {
+    let bucket, prepend = ''
+    if (type == undefined || type == 'kv') {
+      bucket = this.bucket
+    } else if (type == 'counter' || type == 'counters') {
+      bucket = this.counter_bucket
+    } else if (type == 'sets' || type == 'set') {
+      bucket = this.sets_bucket
+    } else {
+      bucket = DEFAULT_BUCKET
+    }
+
+    if (process.env.NODE_ENV == 'test') {
+      prepend = 'test/'
+    }
+
+    return prepend + bucket
+  }
+
 	//----+
 	// KV |
 	//----+
 	put(k, v) {
 		return this.client.put({
-			bucket: this.bucket,
+			bucket: this.getBucket(),
 			key: k,
 			content: { value: JSON.stringify(v) }
 		})
@@ -41,7 +60,7 @@ class Raku {
 
 	get(k) {
 		return this.client.get({
-				bucket: this.bucket,
+				bucket: this.getBucket(),
 				key: k
 			})
 			.then(result => {
@@ -51,7 +70,7 @@ class Raku {
 
 	del(k) {
 		return this.client.del({
-				bucket: this.bucket,
+				bucket: this.getBucket(),
 				key: k
 			})
 	}
@@ -98,7 +117,7 @@ class Raku {
 	get_sets(k) {
 		this.constructor.check_key(k)
 		return new NoRiak.CRDT.Set(this.client,
-				{ bucket: this.sets_bucket,
+				{ bucket: this.getBucket('sets'),
 					type: this.sets_bucket_type,
 					key: k})
 	}
@@ -126,7 +145,7 @@ class Raku {
 		this.constructor.check_key(k)
 		return this.client.del({
 			type: this.sets_bucket_type,
-			bucket: this.sets_bucket,
+			bucket: this.getBucket('sets'),
 			key: k})
 	}
 
@@ -153,7 +172,7 @@ class Raku {
 	get_counter(k) {
 		this.constructor.check_key(k)
 		return new NoRiak.CRDT.Counter(this.client,
-				{ bucket: this.counter_bucket,
+				{ bucket: this.getBucket('counter'),
 					type: this.counter_bucket_type,
 					key: k})
 	}
@@ -186,7 +205,7 @@ class Raku {
 
 	cdel(k) {
 		this.constructor.check_key(k)
-		return this.client.del({type: this.counter_bucket_type , bucket: this.counter_bucket, key: k})
+		return this.client.del({type: this.counter_bucket_type , bucket: this.getBucket('counter'), key: k})
 	}
 
 	// Make sure the key is a string.

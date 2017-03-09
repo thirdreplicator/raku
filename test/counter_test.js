@@ -51,7 +51,7 @@ describe('counter operations', () => {
 
     it('should be 0 to begin with', () => {
       return raku.client.del({ type: Raku.DEFAULT_COUNTER_BUCKET_TYPE,
-                               bucket: Raku.DEFAULT_COUNTER_BUCKET,
+                               bucket: 'test/' + Raku.DEFAULT_COUNTER_BUCKET,
                                key: 'test_counter'})
           .then(() => raku.cget('test_counter'))
           .then(val => expect(val).to.eql(0))
@@ -147,15 +147,15 @@ describe('counter operations', () => {
     it('should not appear in the list of keys for the bucket.', () => {
       // Delete the test_counter, and show that it's not in the list.
       return raku.cdel('test_counter')
-        raku.client.listKeys({type: 'counters', bucket: 'counters'})
+        raku.client.listKeys({type: 'counters', bucket: 'test/counters'})
         .then(keys => expect(keys).to.not.include('test_counter'))
         // Create it, and show that it is in the list.
         .then(() => raku.cset('test_counter', 500))
-        .then(() => raku.client.listKeys({type: 'counters', bucket: 'counters'}))
+        .then(() => raku.client.listKeys({type: 'counters', bucket: 'test/counters'}))
         .then(keys => expect(keys).to.include('test_counter'))
         // Delete it again, and show that it is not in the list.
         .then(() => raku.cdel('test_counter'))
-        raku.client.listKeys({type: 'counters', bucket: 'counters'})
+        raku.client.listKeys({type: 'counters', bucket: 'test/counters'})
         .then(keys => expect(keys).to.not.include('test_counter'))
     })
 

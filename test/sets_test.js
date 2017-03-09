@@ -1,6 +1,5 @@
 import Raku from '../src/Raku'
 import { expect, assert } from 'chai'
-
 const raku = new Raku()
 
 describe('CRDT sets', () => {
@@ -51,7 +50,7 @@ describe('CRDT sets', () => {
 
 		it('should be false to begin with', () => {
 			return raku.client.del({ type: Raku.DEFAULT_SETS_BUCKET_TYPE,
-															 bucket: Raku.DEFAULT_SETS_BUCKET,
+															 bucket: 'test/' + Raku.DEFAULT_SETS_BUCKET,
 															 key: 'test_sets'})
 					.then(() => raku.sismember('test_sets', 'hello'))
 					.then(val => expect(val).to.be.false)

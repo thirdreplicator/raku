@@ -152,7 +152,7 @@ describe('get/set using non-default bucket state', () => {
     const VALUE = 500
     return raku.set('x', VALUE)
       .then( () => VALUE )
-      .then( () => raku.bget('test_bucket2', 'x') )
+      .then( () => raku.bget('test/test_bucket2', 'x') )
       .then( value => {
         expect(value).to.eql(VALUE)
       })
