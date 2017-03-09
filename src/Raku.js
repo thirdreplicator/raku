@@ -125,8 +125,8 @@ class Raku {
 	sdel(k) {
 		this.constructor.check_key(k)
 		return this.client.del({
-			type: this.constructor.DEFAULT_SETS_BUCKET_TYPE,
-			bucket: this.constructor.DEFAULT_SETS_BUCKET,
+			type: this.sets_bucket_type,
+			bucket: this.sets_bucket,
 			key: k})
 	}
 
@@ -186,7 +186,7 @@ class Raku {
 
 	cdel(k) {
 		this.constructor.check_key(k)
-		return this.client.del({type: this.constructor.DEFAULT_COUNTER_BUCKET_TYPE , bucket: this.constructor.DEFAULT_COUNTER_BUCKET, key: k})
+		return this.client.del({type: this.counter_bucket_type , bucket: this.counter_bucket, key: k})
 	}
 
 	// Make sure the key is a string.

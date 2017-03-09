@@ -100,7 +100,7 @@ describe('counter operations', () => {
     })
 
     it('should return a unique counter value even under high contention', () => {
-      const N = 20
+      const N = 3
       const arr = Array.from(new Array(N), (val,index) => index)
       return raku.cset('test_counter', 0)
         .then(() => Promise.all(arr.map(i => raku.cinc('test_counter'))))
