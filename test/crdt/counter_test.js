@@ -1,9 +1,11 @@
-import Raku from '../src/Raku'
+import Raku from '../../src/Raku'
 import { expect, assert } from 'chai'
 
 const raku = new Raku()
 
 describe('counter operations', () => {
+   beforeEach(() => raku.deleteAll())
+
   // Default counter bucket type
   describe('default counter bucket type', () => {
     // get

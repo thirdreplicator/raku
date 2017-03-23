@@ -1,9 +1,11 @@
-import Raku from '../src/Raku'
+import Raku from '../../src/Raku'
 import { expect } from 'chai'
 
 const raku = new Raku()
 
 describe('client handle', () => {
+  beforeEach(() => raku.deleteAll())
+
   describe('bucket', () => {
     it('should be set to the default bucket, "default"', () => {
       expect(raku.bucket).to.eql(Raku.DEFAULT_BUCKET)

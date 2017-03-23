@@ -1,8 +1,10 @@
-import Raku from '../src/Raku'
+import Raku from '../../src/Raku'
 import { expect, assert } from 'chai'
 const raku = new Raku()
 
 describe('CRDT sets', () => {
+  beforeEach(() => raku.deleteAll())
+
 	// Default sets bucket type
 	describe('default set bucket type', () => {
 		// get

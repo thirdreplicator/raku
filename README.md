@@ -230,6 +230,51 @@ raku.sets_bucket = "fk_Post"
 raku.sets_bucket_type = "foreign_keys"
 ````
 
+### Listing keys, buckets, bucketTypes
+
+#### keys()
+````javascript
+raku.keys() 
+````
+
+List all keys in the database.  Returns an array of objects [{key, bucket, type}].
+
+#### buckets()
+````javascript
+raku.buckets() 
+````
+
+List all buckets in the database. Since, one must provide the bucket type to get a list of buckets within the bucket type, this function assumes a hard-coded list of bucket types stored in Raku.KNOWN_BUCKET_TYPES.  Default values are ['default', 'counters', 'sets'].
+
+#### bucketTypes()
+````javascript
+raku.bucketTypes() 
+````
+
+List all buckets types in the database. Since there is no bucket types API in Riak, this function returns a hard-coded list of bucket types stored in Raku.KNOWN_BUCKET_TYPES.  Default values are ['default', 'counters', 'sets']. You can manually override that list by simply assigning your own array of known bucket types. A list of known bucket types can be obtained at the command line:
+
+````bash
+riak-admin bucket-type list
+````
+
+### Config
+
+Riak's default configuration has a 3 second delay before deleting an object. I ran into this during testing when trying to clear my test database before each test. Apparently, deleting objects in a distributed environment designed for availability is a big deal. For the official documentation explaining why, you can [read more here](http://docs.basho.com/riak/kv/2.2.1/using/reference/object-deletion/).  If you want your Riak cluster to behave more like a strongly consistent database (maybe for testing purposes), you can set the "delete_mode" parameter in advanced.config to have the value "immediate".  On Ubuntu, advanced.config is found /etc/riak/advanced.config.  It contains an array of configuration parameters.  Just make the following entry in the configuration array:
+
+````javascript
+ {riak_kv, [
+        {delete_mode, immediate} 
+    ]},
+````
+
+You can view an example of a complete [advanced.config file here](https://gist.github.com/thirdreplicator/62c1c7e25d8c22c3c79eab61943a8dbc).
+
+Then restart Riak:
+
+````bash
+sudo riak restart
+````
+
 ### More power
 
 If you want the full power of a more sophisticated client, you can access the wrapped no-riak client like this:
@@ -242,6 +287,8 @@ If you want the full power of a more sophisticated client, you can access the wr
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### Notes
+
+2017-03-22: Added deleteAll() to delete whole database (for testing purposes only).  Added functions to list important types: keys(), buckets(), bucketTypes().
 
 2017-02-20: Added CRDT set operations: sismember, smembers, sadd, srem, sdel, scard.
 

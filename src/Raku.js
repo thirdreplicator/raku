@@ -6,6 +6,8 @@ const DEFAULT_COUNTER_BUCKET_TYPE = 'counters'
 const DEFAULT_SETS_BUCKET = 'sets'
 const DEFAULT_SETS_BUCKET_TYPE = 'sets'
 
+const KNOWN_BUCKET_TYPES = ['default', 'sets', 'counters']
+
 const sort_helper = (a, b) => {
 		let t_a = typeof a, t_b = typeof b
 		return t_a < t_b ? -1 : t_a > t_b ? 1 : a < b ? -1 : a > b ? 1 : 0
@@ -68,11 +70,12 @@ class Raku {
 			})
 	} // get
 
-	del(k) {
-		return this.client.del({
-				bucket: this.getBucket(),
-				key: k
-			})
+	del(k, bucket, type) {
+		this.constructor.check_key(k)
+    let args = {key: k}
+    args.bucket = bucket || this.getBucket()
+    if (type) { args.type = type }
+		return this.client.del(args)
 	}
 
 	bget(bucket, k) {
@@ -94,10 +97,7 @@ class Raku {
 	} // set3
 
 	bdel(bucket, k) {
-		return this.client.del({
-				bucket: bucket,
-				key: k
-			})
+		return this.del(k, bucket)
 	}
 
 	//----------+
@@ -142,11 +142,7 @@ class Raku {
 	}
 
 	sdel(k) {
-		this.constructor.check_key(k)
-		return this.client.del({
-			type: this.sets_bucket_type,
-			bucket: this.getBucket('sets'),
-			key: k})
+    return this.del(k, this.getBucket('sets'), this.sets_bucket_type)
 	}
 
 	smembers(k) {
@@ -204,8 +200,7 @@ class Raku {
 	}
 
 	cdel(k) {
-		this.constructor.check_key(k)
-		return this.client.del({type: this.counter_bucket_type , bucket: this.getBucket('counter'), key: k})
+		return this.del(k, this.getBucket('counter'), this.counter_bucket_type)
 	}
 
 	// Make sure the key is a string.
@@ -215,6 +210,70 @@ class Raku {
 		}
 	}
 
+  // This is not a real bucketType API, because Riak offers only a command-line interface to managing
+  //  bucket types, which requires sudo.  You should manually list the known active bucketTypes by
+  //  assigning them like so:
+  //
+  // import Raku from 'raku'
+  // Raku.KNOWN_BUCKET_TYPES = ['default', 'mysets', 'mycounters', 'etc']
+  //
+  // Of course, this will only change the bucket type list in the current file.
+  //
+  bucketTypes() {
+    return Raku.KNOWN_BUCKET_TYPES
+  }
+
+  buckets(bucketType) {
+    const bucketTypes = bucketType == undefined ? this.bucketTypes() : [ bucketType ]
+		return Promise.all(bucketTypes.map(type => this.client.listBuckets({type})))
+      .then(buckets => buckets.reduce((accum, arr, i) => {
+         const typedBuckets = arr.map(bucket => ({bucket, type: bucketTypes[i]}))
+         return accum.concat(typedBuckets)
+       }, []))
+  }
+
+  keys(bucketType, bucket) {
+    let __buckets = null
+
+    let get_buckets = Promise.resolve([{type: bucketType, bucket}])
+    if (bucketType == undefined || bucket == undefined) {
+      get_buckets = this.buckets()
+    }
+    return get_buckets
+			.then(bucket_list => {
+        __buckets = bucket_list
+				return Promise.all(bucket_list.map(args => this.client.listKeys(args)))
+      })
+      .then(keynames_by_bucket => {
+        const keys = []
+        __buckets.forEach((bucketData, i) => {
+          const {type, bucket} = bucketData
+          keynames_by_bucket[i].forEach(key => keys.push({type, bucket, key}))
+        })
+        return keys
+     })
+  }
+
+  deleteAll(force) {
+    if (!force && process.env.NODE_ENV != 'test') {
+      throw 'Error Raku.deleteAll(): refused to delete all keys: must call deleteAll(true) or be in test environment.'
+    }
+    return this.keys() 
+      .then(keyData => {
+        return Promise.all(keyData.map(args => this.client.del(args)))
+      })
+  }
+
+  ping() {
+    return this.client.ping()
+      .then(res => {
+        if (res == null) {
+          return 'pong'
+        } else {
+          return 'ping(): ' + res
+        }
+      })
+  }
 } // class Raku
 
 Raku.DEFAULT_BUCKET = DEFAULT_BUCKET
@@ -222,6 +281,6 @@ Raku.DEFAULT_COUNTER_BUCKET = DEFAULT_COUNTER_BUCKET
 Raku.DEFAULT_COUNTER_BUCKET_TYPE = DEFAULT_COUNTER_BUCKET_TYPE
 Raku.DEFAULT_SETS_BUCKET = DEFAULT_SETS_BUCKET
 Raku.DEFAULT_SETS_BUCKET_TYPE = DEFAULT_SETS_BUCKET_TYPE
-
+Raku.KNOWN_BUCKET_TYPES  = KNOWN_BUCKET_TYPES 
 
 export default Raku
