@@ -106,6 +106,11 @@ describe('CRDT sets', () => {
 			}).to.throw(/key must be a string/i)
 		})
 
+		it.only('should not throw an error if the key does not exist', () => {
+			return raku.srem('asdf', 1)
+        .then(res => expect(res).to.eql(-1))
+		})
+
 		it('should remove the member from the set', () => {
 			return raku.sadd('test_sets', 510)
 				.then(() => raku.sismember('test_sets', 510))

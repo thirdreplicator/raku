@@ -138,7 +138,14 @@ class Raku {
 	srem(k, v) {
 		let s = this.get_sets(k)
 		return s.load()
-			.then(res => res.remove(this.enbuf(v)).save())
+			.then(res => {
+        return res.remove(this.enbuf(v)).save()
+      })
+      .catch(reason => {
+				if (reason.toString().match(/RiakError.*precondition.*not_present/)) {
+          return -1
+        }
+      })
 	}
 
 	sdel(k) {
