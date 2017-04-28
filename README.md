@@ -187,6 +187,13 @@ raku.sdel(key)
 
 Delete all members of the set. Returns a promise.
 
+#### sreset
+````javascript
+raku.sreset(key, values)
+````
+
+Reset the set to the new set of values.  Returns a promise.
+
 #### scard
 ````javascript
 raku.scard(key)
