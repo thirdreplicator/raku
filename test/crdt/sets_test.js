@@ -106,7 +106,7 @@ describe('CRDT sets', () => {
 			}).to.throw(/key must be a string/i)
 		})
 
-		it.only('should not throw an error if the key does not exist', () => {
+		it('should not throw an error if the key does not exist', () => {
 			return raku.srem('asdf', 1)
         .then(res => expect(res).to.eql(-1))
 		})
@@ -165,4 +165,18 @@ describe('CRDT sets', () => {
 			
 		})
 	}) // scard
+
+  describe('raku.sreset(key)', () => {
+    it('should reset an existing set to the new values', () => {
+			let s0 = [42, 50, 100, 'hello']
+      let s1 = [5000, 'good-bye']
+      return raku.sadd('test_sets', ...s0)
+				.then(_ => raku.smembers('test_sets'))
+				.then(s => expect(s).to.eql(s0))
+        .then(_ => raku.sreset('test_sets', ...s1))
+        .then(_ => raku.smembers('test_sets'))
+				.then(s1_ => expect(s1_).to.eql(s1))
+        
+    })
+  })
 }) // describe sets operations (sadd, sismember, srem, sdel, smemembers)

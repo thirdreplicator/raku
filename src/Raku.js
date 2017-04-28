@@ -135,6 +135,11 @@ class Raku {
 		return s.save()
 	}
 
+  sreset(k, ...values) {
+    return this.sdel(k)
+      .then(_ => this.sadd(k, ...values))
+  }
+
 	srem(k, v) {
 		let s = this.get_sets(k)
 		return s.load()
