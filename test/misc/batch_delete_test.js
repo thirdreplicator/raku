@@ -8,9 +8,9 @@ const raku = new Raku()
 //  a test or development environment.
 describe('Batch delete', function() {
 
-	beforeEach(() => raku.deleteAll())
+	beforeEach(() => raku.delete_all())
 
-  describe('Raku.deleteAll()', function() {
+  describe('Rraku.delete_all()', function() {
     it('should delete kv keys in the default bucket', async () => {
       // The database should be empty.
       const before = await raku.keys()
@@ -22,7 +22,7 @@ describe('Batch delete', function() {
       expect(after[0].key).to.eql('x1')
 
       // Clear the whole database.
-			await raku.deleteAll()
+			await raku.delete_all()
       const afterDelete = await raku.keys()
       expect(afterDelete).to.eql([])
     })
@@ -40,7 +40,7 @@ describe('Batch delete', function() {
       expect(afterSetup.map(o => o.key).sort()).to.eql(['a', 'b'])
 
       // Clear the whole database.
-			await raku.deleteAll()
+			await raku.delete_all()
       const afterDelete = await raku.keys()
       expect(afterDelete).to.eql([])
     })
@@ -62,7 +62,7 @@ describe('Batch delete', function() {
       expect(afterSetup.map(o => o.key).sort()).to.eql(['a', 'b', 'c1', 'c2'])
 
       // Clear the whole database.
-			await raku.deleteAll()
+			await raku.delete_all()
       const afterDelete = await raku.keys()
       expect(afterDelete).to.eql([])
     })
@@ -80,7 +80,7 @@ describe('Batch delete', function() {
       expect(afterSetup.map(o => o.key).sort()).to.eql(['s1', 's2'])
 
       // Clear the whole database.
-			await raku.deleteAll()
+			await raku.delete_all()
       const afterDelete = await raku.keys()
       expect(afterDelete).to.eql([])
     })

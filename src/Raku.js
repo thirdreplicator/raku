@@ -29,7 +29,7 @@ class Raku {
     this.sets_bucket_type = DEFAULT_SETS_BUCKET_TYPE
   }
 
-  getBucket(type) {
+  current_bucket(type) {
     let bucket, prepend = ''
     if (type == undefined || type == 'kv') {
       bucket = this.bucket
@@ -53,7 +53,7 @@ class Raku {
   //----+
   put(k, v) {
     return this.client.put({
-      bucket: this.getBucket(),
+      bucket: this.current_bucket(),
       key: k,
       content: { value: JSON.stringify(v) }
     })
@@ -62,7 +62,7 @@ class Raku {
 
   get(k) {
     return this.client.get({
-        bucket: this.getBucket(),
+        bucket: this.current_bucket(),
         key: k
       })
       .then(result => {
@@ -73,7 +73,7 @@ class Raku {
   del(k, bucket, type) {
     this.constructor.check_key(k)
     let args = {key: k}
-    args.bucket = bucket || this.getBucket()
+    args.bucket = bucket || this.current_bucket()
     if (type) { args.type = type }
     return this.client.del(args)
   }
@@ -117,7 +117,7 @@ class Raku {
   get_sets(k) {
     this.constructor.check_key(k)
     return new NoRiak.CRDT.Set(this.client,
-        { bucket: this.getBucket('sets'),
+        { bucket: this.current_bucket('sets'),
           type: this.sets_bucket_type,
           key: k})
   }
@@ -154,7 +154,7 @@ class Raku {
   }
 
   sdel(k) {
-    return this.del(k, this.getBucket('sets'), this.sets_bucket_type)
+    return this.del(k, this.current_bucket('sets'), this.sets_bucket_type)
   }
 
   smembers(k) {
@@ -180,7 +180,7 @@ class Raku {
   get_counter(k) {
     this.constructor.check_key(k)
     return new NoRiak.CRDT.Counter(this.client,
-        { bucket: this.getBucket('counter'),
+        { bucket: this.current_bucket('counter'),
           type: this.counter_bucket_type,
           key: k})
   }
@@ -212,7 +212,7 @@ class Raku {
   }
 
   cdel(k) {
-    return this.del(k, this.getBucket('counter'), this.counter_bucket_type)
+    return this.del(k, this.current_bucket('counter'), this.counter_bucket_type)
   }
 
   // Make sure the key is a string.
@@ -222,8 +222,8 @@ class Raku {
     }
   }
 
-  // This is not a real bucketType API, because Riak offers only a command-line interface to managing
-  //  bucket types, which requires sudo.  You should manually list the known active bucketTypes by
+  // This is not a real bucket_type API, because Riak offers only a command-line interface to managing
+  //  bucket types, which requires sudo.  You should manually list the known active bucket_types by
   //  assigning them like so:
   //
   // import Raku from 'raku'
@@ -231,24 +231,24 @@ class Raku {
   //
   // Of course, this will only change the bucket type list in the current file.
   //
-  bucketTypes() {
+  bucket_types() {
     return Raku.KNOWN_BUCKET_TYPES
   }
 
-  buckets(bucketType) {
-    const bucketTypes = bucketType == undefined ? this.bucketTypes() : [ bucketType ]
-    return Promise.all(bucketTypes.map(type => this.client.listBuckets({type})))
+  buckets(bucket_type) {
+    const bucket_types = bucket_type == undefined ? this.bucket_types() : [ bucket_type ]
+    return Promise.all(bucket_types.map(type => this.client.listBuckets({type})))
       .then(buckets => buckets.reduce((accum, arr, i) => {
-         const typedBuckets = arr.map(bucket => ({bucket, type: bucketTypes[i]}))
-         return accum.concat(typedBuckets)
+         const typed_buckets = arr.map(bucket => ({bucket, type: bucket_types[i]}))
+         return accum.concat(typed_buckets)
        }, []))
   }
 
-  keys(bucketType, bucket) {
+  keys(bucket_type, bucket) {
     let __buckets = null
 
-    let get_buckets = Promise.resolve([{type: bucketType, bucket}])
-    if (bucketType == undefined || bucket == undefined) {
+    let get_buckets = Promise.resolve([{type: bucket_type, bucket}])
+    if (bucket_type == undefined || bucket == undefined) {
       get_buckets = this.buckets()
     }
     return get_buckets
@@ -258,23 +258,23 @@ class Raku {
       })
       .then(keynames_by_bucket => {
         const keys = []
-        __buckets.forEach((bucketData, i) => {
-          const {type, bucket} = bucketData
+        __buckets.forEach((bucket_data, i) => {
+          const {type, bucket} = bucket_data
           keynames_by_bucket[i].forEach(key => keys.push({type, bucket, key}))
         })
         return keys
      })
   }
 
-  deleteAll(force) {
+  delete_all(force) {
     if (!force && process.env.NODE_ENV != 'test') {
-      throw 'Error Raku.deleteAll(): refused to delete all keys: must call deleteAll(true) or be in test environment.'
+      throw 'Error Raku.delete_all(): refused to delete all keys: must call delete_all(true) or be in test environment.'
     }
     return this.keys()
       .then(key_data => {
         // Delete only test data.
         const test_keys = key_data.filter(k => (typeof k.bucket == 'string') && (k.bucket.match(/^test/)))
-        return Promise.all(keyData.map(args => this.client.del(args)))
+        return Promise.all(key_data.map(args => this.client.del(args)))
       })
   }
 

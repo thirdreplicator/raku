@@ -6,7 +6,7 @@ import { expectSetEquality } from '../helpers'
 const raku = new Raku()
 
 describe('List keys', () => {
-  beforeEach(() => raku.deleteAll())
+  beforeEach(() => raku.delete_all())
 
   describe('List keys: raku.keys(bucketType, bucket)', () => {
     it('should return a list of keys in a bucket with the given bucketType', async () => {

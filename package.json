@@ -1,6 +1,6 @@
 {
   "name": "raku",
-  "version": "2.6.1",
+  "version": "3.0.0",
   "description": "A simple get/put/del interface to Riak",
   "main": "dist/Raku.js",
   "scripts": {

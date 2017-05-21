@@ -4,7 +4,7 @@ import { expect, assert } from 'chai'
 const raku = new Raku()
 
 describe('counter operations', () => {
-   beforeEach(() => raku.deleteAll())
+   beforeEach(() => raku.delete_all())
 
   // Default counter bucket type
   describe('default counter bucket type', () => {

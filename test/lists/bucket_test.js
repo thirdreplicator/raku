@@ -6,7 +6,7 @@ import { expectSetEquality } from '../helpers'
 const raku = new Raku()
 
 describe('Bucket listing', () => {
-  beforeEach(() => raku.deleteAll())
+  beforeEach(() => raku.delete_all())
 
 	// List the known buckets given a bucket type.
   describe('raku.buckets(bucketType)', () => {

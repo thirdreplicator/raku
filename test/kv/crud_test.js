@@ -4,7 +4,7 @@ import { expect } from 'chai'
 const raku = new Raku()
 
 describe('client handle', () => {
-  beforeEach(() => raku.deleteAll())
+  beforeEach(() => raku.delete_all())
 
   describe('bucket', () => {
     it('should be set to the default bucket, "default"', () => {

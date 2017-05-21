@@ -3,7 +3,7 @@ import { expect, assert } from 'chai'
 const raku = new Raku()
 
 describe('CRDT sets', () => {
-  beforeEach(() => raku.deleteAll())
+  beforeEach(() => raku.delete_all())
 
 	// Default sets bucket type
 	describe('default set bucket type', () => {
