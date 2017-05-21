@@ -1,6 +1,6 @@
 # Raku (楽)
 
-A simplified Javascript client for working with Riak 2.0, based on [no-riak](https://github.com/oleksiyk/no-riak).	"Raku" means "easy" or "simple" in Japanese and it kind of sounds like "Riak."	Basically, I wanted a client where i could just type
+A simplified Javascript client for working with Riak 2.0, based on [no-riak](https://github.com/oleksiyk/no-riak).  "Raku" means "easy" or "simple" in Japanese and it kind of sounds like "Riak."  Basically, I wanted a client where i could just type
 
 ```javascript
 set(key, value)
@@ -12,7 +12,7 @@ or
 get(key)
 ```
 
-but I found that most clients take in a slew of arguments that I didn't want to think about.	So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.
+but I found that most clients take in a slew of arguments that I didn't want to think about.  So, I took the most reasonable promise-based client that I could find, [no-riak](https://github.com/oleksiyk/no-riak) and wrapped it in a class.
 
 The API is somewhat inspired by Redis.
 
@@ -28,10 +28,10 @@ import Raku from Raku
 raku = new Raku()
 
 raku.set('mykey', 42)
-	.then(() => raku.get('mykey'))
-	.then(value => {
-		console.log('mykey is ' + value)
-	})
+  .then(() => raku.get('mykey'))
+  .then(value => {
+    console.log('mykey is ' + value)
+  })
 ```
 
 ## API
@@ -83,14 +83,14 @@ Get the value at (bucket, key).  Returns a promise.
 raku.bset(bucket, key, value)
 ````
 
-Set the value at (bucket, key) to value.	Returns a promise.
+Set the value at (bucket, key) to value.  Returns a promise.
 
 #### bdel
 ````javascript
 raku.bdel(bucket, key)
 ````
 
-Delete the value at (bucket, key).	Returns a promise.
+Delete the value at (bucket, key).  Returns a promise.
 
 ### [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) [Riak Counters](http://docs.basho.com/riak/kv/2.2.0/developing/data-types/counters/)
 
@@ -108,14 +108,14 @@ $ sudo riak-admin bucket-type activate counters
 raku.cset(key, value)
 ````
 
-Set and save a counter to an arbitrary integer value (positive or negative).	Returns a promise that evaluates to the new value.
+Set and save a counter to an arbitrary integer value (positive or negative).  Returns a promise that evaluates to the new value.
 
 #### cget
 ````javascript
 raku.cget(key)
 ````
 
-Get a counter stored at **key** from the database.	Returns a promise that evaluates to the value.
+Get a counter stored at **key** from the database.  Returns a promise that evaluates to the value.
 
 #### cinc
 ````javascript
@@ -129,7 +129,7 @@ Increment and save a counter by any amount.  Negative amounts will decrement the
 raku.cdec(key, amount)
 ````
 
-Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.	If no amount argument is given, the counter will be decremented by 1. Returns a promise that evaluates to the new value.
+Decrement and save a counter.  Positive amounts will decrement the counter, and negative amounts will increment the counter.  If no amount argument is given, the counter will be decremented by 1. Returns a promise that evaluates to the new value.
 
 #### cdel
 ````javascript
@@ -203,7 +203,7 @@ Count members in the set. Returns a promise that resolves to the set's count.
 
 ### Bucket and bucket types API
 
-For the aforementioned KV, counter, and set functions rely on an unspecified fall-back value, one for each data type.	To change the fall-back value just assign it a new value:
+For the aforementioned KV, counter, and set functions rely on an unspecified fall-back value, one for each data type. To change the fall-back value just assign it a new value:
 
 For KV data types,
 
@@ -214,7 +214,7 @@ raku.bucket = "mybucket"
 
 KV functions have a default bucket but don't have a default bucket **type**.
 
-CRDT Counters have a default bucket type of "counters" and a default bucket also named "counters".	You can change these defaults like so:
+CRDT Counters have a default bucket type of "counters" and a default bucket also named "counters".  You can change these defaults like so:
 
 #### counter_bucket=
 ````javascript
@@ -239,25 +239,25 @@ raku.sets_bucket = "fk_Post"
 raku.sets_bucket_type = "foreign_keys"
 ````
 
-### Listing keys, buckets, bucketTypes
+### Listing keys, buckets, bucket_types
 
 #### keys()
 ````javascript
-raku.keys() 
+raku.keys()
 ````
 
 List all keys in the database.  Returns an array of objects [{key, bucket, type}].
 
 #### buckets()
 ````javascript
-raku.buckets() 
+raku.buckets()
 ````
 
 List all buckets in the database. Since, one must provide the bucket type to get a list of buckets within the bucket type, this function assumes a hard-coded list of bucket types stored in Raku.KNOWN_BUCKET_TYPES.  Default values are ['default', 'counters', 'sets'].
 
-#### bucketTypes()
+#### bucket_types()
 ````javascript
-raku.bucketTypes() 
+raku.bucket_types()
 ````
 
 List all buckets types in the database. Since there is no bucket types API in Riak, this function returns a hard-coded list of bucket types stored in Raku.KNOWN_BUCKET_TYPES.  Default values are ['default', 'counters', 'sets']. You can manually override that list by simply assigning your own array of known bucket types. A list of known bucket types can be obtained at the command line:
@@ -272,7 +272,7 @@ Riak's default configuration has a 3 second delay before deleting an object. I r
 
 ````javascript
  {riak_kv, [
-        {delete_mode, immediate} 
+        {delete_mode, immediate}
     ]},
 ````
 
@@ -289,13 +289,15 @@ sudo riak restart
 If you want the full power of a more sophisticated client, you can access the wrapped no-riak client like this:
 
 ```javascript
-	raku.client		# a no-riak client
-	raku.NoRiak		# the no-riak module
+  raku.client   # a no-riak client
+  raku.NoRiak   # the no-riak module
 ```
 
 See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 ### Notes
+
+2017-05-21: changing deleteAll() and bucketTypes() to underscore naming style: delete_all() and bucket_types(). delete_all() only deletes keys whose buckets match /^test/ so that we don't delete the production database.
 
 2017-03-22: Added deleteAll() to delete whole database (for testing purposes only).  Added functions to list important types: keys(), buckets(), bucketTypes().
 
@@ -305,9 +307,9 @@ See [no-riak](https://github.com/oleksiyk/no-riak) for details.
 
 2017-01-13: Just added support for incrementing counters: cset, cget, cinc, cdec.
 
-2016-12-19: I just released v2.0.0.  That doesn't mean it's mature.  Following the semantic versioning convention, it just means that there's a breaking change.	There's breaking because the fall-back value of the bucket is no longer DEFAULT_BUCKET but instead it is this.bucket of the client instance, raku.
+2016-12-19: I just released v2.0.0.  That doesn't mean it's mature.  Following the semantic versioning convention, it just means that there's a breaking change.  There's breaking because the fall-back value of the bucket is no longer DEFAULT_BUCKET but instead it is this.bucket of the client instance, raku.
 
-2016-12-13: I just started learning Riak, and just released this little wrapper for myself.  I'll be adding features as I learn more about Riak.	I'm happy to hear from anybody using this.	You can email me here: thirdreplicator@gmail.com
+2016-12-13: I just started learning Riak, and just released this little wrapper for myself.  I'll be adding features as I learn more about Riak.  I'm happy to hear from anybody using this.  You can email me here: thirdreplicator@gmail.com
 
 ### License
 
