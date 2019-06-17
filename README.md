@@ -23,7 +23,7 @@ $ npm install --save raku
 ```
 
 ```javascript
-import Raku from Raku
+import Raku from 'raku'
 
 raku = new Raku()
 
