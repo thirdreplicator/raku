@@ -267,7 +267,7 @@ class Raku {
   }
 
   delete_all(force) {
-    if (!force && process.env.NODE_ENV != 'test') {
+    if (!(force || process.env.NODE_ENV === 'test')) {
       throw 'Error Raku.delete_all(): refused to delete all keys: must call delete_all(true) or be in test environment.'
     }
     return this.keys()
