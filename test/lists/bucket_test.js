@@ -8,15 +8,15 @@ const raku = new Raku()
 describe('Bucket listing', () => {
   beforeEach(() => raku.delete_all())
 
-	// List the known buckets given a bucket type.
+  // List the known buckets given a bucket type.
   describe('raku.buckets(bucketType)', () => {
     it('should return a list of buckets within the given bucketType', async () => {
       let actual = null
       let expected = [
-						{ type: 'counters',
-							bucket: 'test/IDS'},
-						{ type: 'counters',
-							bucket: 'test/counters'}]
+            { type: 'counters',
+              bucket: 'test/IDS'},
+            { type: 'counters',
+              bucket: 'test/counters'}]
       expect(raku.counter_bucket).to.eql('counters')
       raku.counter_bucket = 'IDS'
       await raku.cinc('Person:last_id') 
@@ -31,13 +31,13 @@ describe('Bucket listing', () => {
       
       return raku.buckets('counters')
         .then(buckets => {
-					expectSetEquality(buckets, expected)
+          expectSetEquality(buckets, expected)
         })
         .then(_ => raku.counter_bucket = 'counters')
     })
   }) //
 
-	// List the known buckets for all known bucket types.
+  // List the known buckets for all known bucket types.
   describe('raku.buckets()',  () => {
     it('should list all known buckets (for the known bucketTypes)', async () => {
       let expected = [
@@ -53,7 +53,7 @@ describe('Bucket listing', () => {
             bucket: 'test/LAST_IDS'},
           { type: 'sets',
             bucket: 'test/sets'},
-				]
+        ]
       raku.bucket = 'articles'
       await raku.put('hello', 'how are you?')
       await raku.put('x', 500)
@@ -83,7 +83,7 @@ describe('Bucket listing', () => {
 
       return raku.buckets()
         .then(buckets => {
-					expectSetEquality(buckets, expected)
+          expectSetEquality(buckets, expected)
         })
     })
   })
