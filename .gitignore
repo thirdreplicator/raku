@@ -1,4 +1,3 @@
-dist/
 *.tgz
 tmp/
 *.log
